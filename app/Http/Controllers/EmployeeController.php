@@ -11,7 +11,7 @@ class EmployeeController extends Controller
     public function index() 
     {
         $emp = Employee::all();
-        // dd($employees);
+        // dd($emp);
         // return view('welcome')->with('employees',$emp);
         return response()->json($emp,200,['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8mb4'],JSON_UNESCAPED_UNICODE);
     }
