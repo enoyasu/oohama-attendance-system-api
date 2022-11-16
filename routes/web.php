@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,7 @@ use App\Http\Controllers\EmployeeController;
 |
 */
 
-Route::get('/', [EmployeeController::class, 'index']);
+Route::get('api/employee/', [EmployeeController::class, 'index']);
 Route::post('api/employee/create', [EmployeeController::class, 'create']);
 Route::get('api/employee/{id}', [EmployeeController::class, 'show']);
+Route::get('api/admin-user/login', [LoginController::class, 'login']);
