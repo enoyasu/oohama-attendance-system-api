@@ -17,5 +17,7 @@ use App\Http\Controllers\LoginController;
 
 Route::get('api/employee/', [EmployeeController::class, 'index']);
 Route::post('api/employee/create', [EmployeeController::class, 'create']);
-Route::get('api/employee/{id}', [EmployeeController::class, 'show']);
-Route::get('api/admin-user/login', [LoginController::class, 'login']);
+Route::get('api/employee/detail/{id}', [EmployeeController::class, 'detail']);
+Route::get('api/employee/edit/{id}', [EmployeeController::class, 'edit']);
+Route::get('api/employee/delete/{id}', [EmployeeController::class, 'delete']);
+Route::post('api/admin-user/login', [LoginController::class, 'login']);
