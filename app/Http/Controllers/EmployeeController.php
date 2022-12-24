@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use  App\Models\Employee;
 use  App\Models\EmployeeProfile;
+use Illuminate\Support\Facades\DB;
 
 class EmployeeController extends Controller
 {
@@ -21,35 +22,77 @@ class EmployeeController extends Controller
         $emp = new Employee();
         $emp_prof = new EmployeeProfile();
 
-        $emp = [
-            'name' => $request->input('name'),
-            'name_kana' => $request->input('name_kana'),
-            'gender' => $request->input('gender'),
-            'age' => $request->input('age'),
+        $new_emp = $emp->create([
+            'name'       => $request->input('name'),
+            'name_kana'  => $request->input('name_kana'),
+            'gender'     => $request->input('gender'),
+            'age'        => $request->input('age'),
             'created_at' => now(),
             'updated_at' => now(),
-        ];
+        ]);
 
-        $emp_prof = [
-            'emp_id' => mysql_insert_id(),
-            'h_pay' => $request->input('h_pay'),
-            'tel' => $request->input('tel'),
-            'address' => $request->input('address'),
-            'birthday' => $request->input('birthday'),
-            'memo' => $request->input('memo'),
+        $emp_prof->create([
+            'emp_id'     => $new_emp->id,
+            'h_pay'      => $request->input('h_pay'),
+            'tel'        => $request->input('tel'),
+            'address'    => $request->input('address'),
+            'birthday'   => $request->input('birthday'),
+            'memo'       => $request->input('memo'),
             'created_at' => now(),
             'updated_at' => now(),
-        ];
-        
-        $emp->save();
-        $emp_prof->save();
+        ]);
 
-        return response()->json(Employee::all());
+        return response()->json(Employee::find($new_emp->id));
     }
 
-    public function show(Int $id)
+    public function detail(Int $id)
+    {
+        $emp_prof = DB::table('employees')
+            ->join('employee_profile', 'employees.id', '=', 'employee_profile.emp_id')
+            ->select(
+                'employees.name as emp_name',
+                'employees.name_kana as emp_name_kana',
+                'employees.gender as emp_gender',
+                'employees.age as emp_age',
+                'employee_profile.h_pay as emp_h_pay',
+                'employee_profile.tel as emp_tel',
+                'employee_profile.address as emp_address',
+                'employee_profile.birthday as emp_birthday',
+                'employee_profile.memo as emp_memo',
+                'employees.del_flg as emp_del_flg',
+                )
+            ->where('employees.id', '=', $id)
+            ->get();
+        return response()->json($emp_prof,200,['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8mb4'],JSON_UNESCAPED_UNICODE);
+    }
+
+    public function edit(Request $request)
+    {
+        $emp = new Employee();
+        $emp_prof = new EmployeeProfile();
+
+        $emp->name            = $request->input('name');
+        $emp->name_kana       = $request->input('name_kana');
+        $emp->gender          = $request->input('gender');
+        $emp->age             = $request->input('age');
+        $emp->updated_at      = now();
+        $emp_prof->h_pay      = $request->input('h_pay');
+        $emp_prof->tel        = $request->input('tel');
+        $emp_prof->address    = $request->input('address');
+        $emp_prof->birthday   = $request->input('birthday');
+        $emp_prof->memo       = $request->input('memo');
+        $emp_prof->updated_at = now();
+        $emp->save();
+        $emp_prof->save();
+    }
+
+    public function delete(Int $id)
     {
         $emp = Employee::find($id);
+        $emp->del_flg = 1;
+        $emp->updated_at = now();
+        $emp->save();
+
         return response()->json($emp,200,['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8mb4'],JSON_UNESCAPED_UNICODE);
     }
 
