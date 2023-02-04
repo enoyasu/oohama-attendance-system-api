@@ -22,7 +22,10 @@ class EmployeeController extends Controller
         $emp = new Employee();
         $emp_prof = new EmployeeProfile();
 
+
+
         try {
+            DB::beginTransaction();
             $new_emp = $emp->create([
                 'name'       => $request->input('name'),
                 'name_kana'  => $request->input('name_kana'),
@@ -31,21 +34,24 @@ class EmployeeController extends Controller
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-
-            $emp_prof->create([
-                'emp_id'     => $new_emp->id,
-                'h_pay'      => $request->input('h_pay'),
-                'tel'        => $request->input('tel'),
-                'address'    => $request->input('address'),
-                'birthday'   => $request->input('birthday'),
-                'memo'       => $request->input('memo'),
-                'created_at' => $new_emp->created_at,
-                'updated_at' => $new_emp->updated_at,
-            ]);
-            if ($new_emp) {
+            if (!empty($new_emp)) {
+                $new_emp_prof = $emp_prof->create([
+                    'emp_id'     => $new_emp->id,
+                    'h_pay'      => $request->input('h_pay'),
+                    'tel'        => $request->input('tel'),
+                    'address'    => $request->input('address'),
+                    'birthday'   => $request->input('birthday'),
+                    'memo'       => $request->input('memo'),
+                    'created_at' => $new_emp->created_at,
+                    'updated_at' => $new_emp->updated_at,
+                ]);
+            }
+            if (!empty($new_emp) && !empty($new_emp_prof)) {
+                DB::commit();
                 $status = 200;
                 $process_msg = 'success';
             } else {
+                DB::rollBack();
                 $status = 500;
                 $process_msg = 'Bad Request';
             }
@@ -54,6 +60,7 @@ class EmployeeController extends Controller
                 'process_msg' => $process_msg
             ]);
         } catch(\Exception $e) {
+            DB::rollBack();
             \Log::info($e->getMessage());
             return response()->json($status,$e);
         }
