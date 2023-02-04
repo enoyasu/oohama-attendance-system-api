@@ -28,8 +28,8 @@ class EmployeeController extends Controller
                 'name_kana'  => $request->input('name_kana'),
                 'gender'     => $request->input('gender'),
                 'age'        => $request->input('age'),
-                'created_at' => $request->input('created_at'),
-                'updated_at' => $request->input('updated_at'),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             $emp_prof->create([
@@ -39,8 +39,8 @@ class EmployeeController extends Controller
                 'address'    => $request->input('address'),
                 'birthday'   => $request->input('birthday'),
                 'memo'       => $request->input('memo'),
-                'created_at' => $request->input('created_at'),
-                'updated_at' => $request->input('updated_at'),
+                'created_at' => $new_emp->created_at,
+                'updated_at' => $new_emp->updated_at,
             ]);
             if ($new_emp) {
                 $status = 200;
