@@ -62,7 +62,7 @@ class EmployeeController extends Controller
         } catch(\Exception $e) {
             DB::rollBack();
             \Log::info($e->getMessage());
-            return response()->json($status,$e);
+            return response()->json($status,$e->getMessage());
         }
 
         return response()->json(Employee::find($new_emp->id));
