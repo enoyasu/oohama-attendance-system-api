@@ -50,16 +50,17 @@ class EmployeeController extends Controller
         $emp_prof = DB::table('employees')
             ->join('employee_profile', 'employees.id', '=', 'employee_profile.emp_id')
             ->select(
-                'employees.name as emp_name',
-                'employees.name_kana as emp_name_kana',
-                'employees.gender as emp_gender',
-                'employees.age as emp_age',
-                'employee_profile.h_pay as emp_h_pay',
-                'employee_profile.tel as emp_tel',
-                'employee_profile.address as emp_address',
-                'employee_profile.birthday as emp_birthday',
-                'employee_profile.memo as emp_memo',
-                'employees.del_flg as emp_del_flg',
+                'employees.id as emp_id',
+                'employees.name as name',
+                'employees.name_kana as name_kana',
+                'employees.gender as gender',
+                'employees.age as age',
+                'employee_profile.h_pay as h_pay',
+                'employee_profile.tel as tel',
+                'employee_profile.address as address',
+                'employee_profile.birthday as birthday',
+                'employee_profile.memo as memo',
+                'employees.del_flg as del_flg',
                 )
             ->where('employees.id', '=', $id)
             ->get();
