@@ -22,25 +22,41 @@ class EmployeeController extends Controller
         $emp = new Employee();
         $emp_prof = new EmployeeProfile();
 
-        $new_emp = $emp->create([
-            'name'       => $request->input('name'),
-            'name_kana'  => $request->input('name_kana'),
-            'gender'     => $request->input('gender'),
-            'age'        => $request->input('age'),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        try {
+            $new_emp = $emp->create([
+                'name'       => $request->input('name'),
+                'name_kana'  => $request->input('name_kana'),
+                'gender'     => $request->input('gender'),
+                'age'        => $request->input('age'),
+                'created_at' => $request->input('created_at'),
+                'updated_at' => $request->input('updated_at'),
+            ]);
 
-        $emp_prof->create([
-            'emp_id'     => $new_emp->id,
-            'h_pay'      => $request->input('h_pay'),
-            'tel'        => $request->input('tel'),
-            'address'    => $request->input('address'),
-            'birthday'   => $request->input('birthday'),
-            'memo'       => $request->input('memo'),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            $emp_prof->create([
+                'emp_id'     => $new_emp->id,
+                'h_pay'      => $request->input('h_pay'),
+                'tel'        => $request->input('tel'),
+                'address'    => $request->input('address'),
+                'birthday'   => $request->input('birthday'),
+                'memo'       => $request->input('memo'),
+                'created_at' => $request->input('created_at'),
+                'updated_at' => $request->input('updated_at'),
+            ]);
+            if ($new_emp) {
+                $status = 200;
+                $process_msg = 'success';
+            } else {
+                $status = 500;
+                $process_msg = 'Bad Request';
+            }
+            return response()->json([
+                'status' => $status,
+                'process_msg' => $process_msg
+            ]);
+        } catch(\Exception $e) {
+            \Log::info($e->getMessage());
+            return response()->json($status,$e);
+        }
 
         return response()->json(Employee::find($new_emp->id));
     }
